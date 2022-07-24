@@ -81,3 +81,100 @@ dotenv.config()
 module.exports=process.env
 ```
 
+
+
+# 四、添加路由
+
+## 安装`koa-router`
+
+```
+npm i koa-router
+```
+
+步骤
+
+1. 导入包
+2. 实例化对象
+3. 编写路由
+4. 注册中间件
+
+## 编写路由
+
+创建`src/router`目录，编写`user.route.js` 
+
+```js
+const Router=require('koa-router')
+const router= new Router({prefix:'/users'}) 
+userRouter.get('/',(ctx,next)=>{
+  ctx.body='hello user'
+})
+
+moudle.exports=router
+```
+
+## 编写main.js
+
+```js
+const userRouter=require('./router/user.route')
+app.use(userRouter.routes())
+```
+
+
+
+# 五、目录结构优化
+
+## 将http服务和app业务拆分
+
+创建`src/app/index.js`
+
+```js
+const Koa =require('koa')
+
+const userRouter=require('../router/user.route')
+
+const app=new Koa()
+
+app.use(userRouter.routes())
+
+module.exports=app
+```
+
+改写`main.js`
+
+```js
+const app=require('./app')
+```
+
+## 将路由和控制器拆分
+
+路由：解析URL，分布给控制器对应的方法
+
+控制器：处理不同的业务
+
+改写`user.route.js`
+
+```js
+const {register,login}=require('../controller/user.controller')
+//注册接口
+router.post('/register',register)
+
+//登录接口
+router.post('/login',login)
+```
+
+创建 `controll/user.controller.js`
+
+```js
+class UserController{
+  async register(ctx,next){
+    ctx.body='用户注册成功'
+  }
+
+  async login(ctx,next){
+    ctx.body='登录成功'
+  }
+}
+
+module.exports=new UserController()
+```
+
