@@ -178,3 +178,55 @@ class UserController{
 module.exports=new UserController()
 ```
 
+# 六、解析body
+
+## 安装`koa-body`
+
+```js
+npm  i koa-body
+```
+
+## 注册中间件
+
+改写`app/index.js`
+
+```js
+const koaBody = require('koa-body')
+app.use(koaBody())
+```
+
+## 解析请求数据
+
+改写`user.controller.js`
+
+```js
+const {createUser} =require('../service/user.service')
+
+async register(ctx,next){
+    console.log(ctx.request.body);
+    const {user_name,paassword}  =ctx.request.body
+    //操作数据库
+    const res = await createUser(user_name,paassword)
+    console.log(res);
+    //返回结果
+    ctx.body=ctx.request.body
+  }
+```
+
+## 拆分service层
+
+主要是处理数据库
+
+创建`src/service/user.service.js`
+
+```js
+class UserService{
+  async createUser(user_name,password){
+    //todo
+    return '写入数据库成功' 
+  }
+}
+
+module.exports=new UserService()
+```
+
